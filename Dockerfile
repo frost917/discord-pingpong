@@ -1,6 +1,6 @@
 ﻿FROM alpine/git AS clone
 
-RUN git clone https://github.com/frost917/discord-pingpong.git
+RUN git clone https://github.com/frost917/discord-pingpong.git /discord-pingpong
 
 FROM python:3.12.6-alpine3.19 AS flask
 
