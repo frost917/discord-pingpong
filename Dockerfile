@@ -2,7 +2,7 @@
 
 RUN git clone https://github.com/frost917/discord-pingpong.git /discord-pingpong
 
-FROM python:3.12.6-alpine3.19 AS flask
+FROM python:3.11-alpine3.19 AS flask
 
 COPY --from=clone /discord-pingpong /apps
 
