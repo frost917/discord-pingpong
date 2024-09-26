@@ -39,18 +39,30 @@ do
 done
 
 # push manifest
+echo ==============================================
 echo push $manifestName
 podman --root $dataRoot manifest push --all --rm $manifestName docker://$manifestName
 result=`echo $?`
+echo $result
+counter=0
 
 while true;
 do
 	if [[ $result != "0" ]];
 	then
+		echo =============== UPLOAD RETRY ===================
 		podman --root $dataRoot manifest push --all --rm $manifestName docker://$manifestName
 		result=`echo $?`
+
+		if [[ $counter -eq 3 ]];
+		then
+			exit 255
+		fi
+
+		counter=1+$counter
 	else
 		echo "upload complete!"
+		echo ==============================================
 		break
 	fi
 done

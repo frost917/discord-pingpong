@@ -9,3 +9,6 @@ def ping():
         return jsonify({
             "type": 1
         })
+    
+if __name__ == '__main__':
+    app.run()
