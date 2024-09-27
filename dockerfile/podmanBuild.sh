@@ -2,7 +2,7 @@
 
 gitDir=$(dirname $(realpath $0))
 serviceName="discord-pingpong"
-imageTag="0.5"
+imageTag="0.6"
 manifestName="$REGISTRY/$serviceName:$imageTag"
 
 # mount podman

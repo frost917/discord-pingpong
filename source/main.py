@@ -1,7 +1,6 @@
 ﻿from flask import Flask, jsonify, request
 
 app = Flask(__name__)
-app.debug = True
 
 @app.route('/', methods=['POST'])
 def ping():
@@ -14,6 +13,19 @@ def ping():
 def hello():
     return "Hello, World!"
     
+def getEnv() -> dict:
+    from os import getenv
+    debugMode = getenv("DEBUG_MODE") if getenv("DEBUG_MODE") != None else False
+    listenIP = getenv("LISTEN_IP") if getenv("LISTEN_IP") != None else "0.0.0.0"
+    port = int(getenv("port")) if getenv("port") != None else 80
+
+    settings = dict()
+    settings["debugMode"] = debugMode
+    settings["listenIP"] = listenIP
+    settings["port"] = port
+
+    return settings
 
 if __name__ == '__main__':
-    app.run()
+    settings = getEnv()
+    app.run(host=settings["listenIP"], debug=settings["debugMode"], port=settings["port"])
