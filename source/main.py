@@ -15,7 +15,7 @@ def hello():
     
 def getEnv() -> dict:
     from os import getenv
-    debugMode = getenv("DEBUG_MODE") if getenv("DEBUG_MODE") != None else False
+    debugMode = bool(getenv("DEBUG_MODE")) if getenv("DEBUG_MODE") != None else False
     listenIP = getenv("LISTEN_IP") if getenv("LISTEN_IP") != None else "0.0.0.0"
     port = int(getenv("port")) if getenv("port") != None else 80
 
