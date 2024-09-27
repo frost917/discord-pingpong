@@ -25,14 +25,14 @@ def keyVerify(f):
         from nacl.signing import VerifyKey
         from nacl.exceptions import BadSignatureError
 
-        keyBox = VerifyKey(bytes.fromhex(getEnv()["pubkey"]))
+        keyBox = VerifyKey(bytes.fromhex(settings["pubkey"]))
 
         timestamp = request.headers["X-Signature-Timestamp"]
         signature = request.headers["X-Signature-Ed25519"]
         body = request.data.decode('utf-8')
 
         try:
-            keyBox.verify(f'{timestamp}{body}'.encode, signature=bytes.fromhex(signature))
+            keyBox.verify(f'{timestamp}{body}'.encode(), signature=bytes.fromhex(signature))
         except BadSignatureError:
             abort(401, 'Invalid Signature Error')
 
