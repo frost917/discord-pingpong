@@ -6,7 +6,7 @@ def getEnv() -> dict:
     debugMode = bool(getenv("DEBUG_MODE")) if getenv("DEBUG_MODE") != None else False
     listenIP = getenv("LISTEN_IP") if getenv("LISTEN_IP") != None else "0.0.0.0"
     port = int(getenv("PORT")) if getenv("PORT") != None else 80
-    pubkey = getenv("BOT_PUBKEY") if getenv("BOT_PUBKEY") != None else Exception("NO_BOT_PBKEY_EXCPTION")
+    pubkey = bytes.fromhex(getenv("BOT_PUBKEY")) if getenv("BOT_PUBKEY") != None else Exception("NO_BOT_PBKEY_EXCPTION")
 
     settings = dict()
     settings["debugMode"] = debugMode
@@ -25,7 +25,7 @@ def keyVerify(f):
         from nacl.signing import VerifyKey
         from nacl.exceptions import BadSignatureError
 
-        keyBox = VerifyKey(bytes.fromhex(settings["pubkey"]))
+        keyBox = VerifyKey(settings["pubkey"])
 
         timestamp = request.headers["X-Signature-Timestamp"]
         signature = request.headers["X-Signature-Ed25519"]
@@ -33,6 +33,9 @@ def keyVerify(f):
 
         try:
             keyBox.verify(f'{timestamp}{body}'.encode(), signature=bytes.fromhex(signature))
+            
+            if settings["debugMode"] :
+                print("signature verify successed!")
         except BadSignatureError:
             abort(401, 'Invalid Signature Error')
 
@@ -43,6 +46,10 @@ def keyVerify(f):
 @app.route('/', methods=['POST'])
 @keyVerify
 def ping():
+    if settings["debugMode"]:
+        print(request.headers)
+        print(request.data)
+    
     if request.json["type"] == 1:
         return jsonify({
             "type": 1
