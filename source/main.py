@@ -12,12 +12,13 @@ def ping():
 @app.route('/', methods=['GET'])
 def hello():
     return "Hello, World!"
-    
+
+
 def getEnv() -> dict:
     from os import getenv
     debugMode = bool(getenv("DEBUG_MODE")) if getenv("DEBUG_MODE") != None else False
     listenIP = getenv("LISTEN_IP") if getenv("LISTEN_IP") != None else "0.0.0.0"
-    port = int(getenv("port")) if getenv("port") != None else 80
+    port = int(getenv("PORT")) if getenv("PORT") != None else 80
 
     settings = dict()
     settings["debugMode"] = debugMode
@@ -28,4 +29,5 @@ def getEnv() -> dict:
 
 if __name__ == '__main__':
     settings = getEnv()
+    print("discord pingpong machine has been started!")
     app.run(host=settings["listenIP"], debug=settings["debugMode"], port=settings["port"])
