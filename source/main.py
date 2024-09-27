@@ -54,6 +54,15 @@ def ping():
         return jsonify({
             "type": 1
         })
+
+    if request.json["type"] == 2:
+        if request.json["data"]["name"] == "ping":
+            return jsonify({
+                "type": 4,
+                "data": {
+                    "content": "pong!"
+                }
+            })
     
 @app.route('/', methods=['GET'])
 def hello():
