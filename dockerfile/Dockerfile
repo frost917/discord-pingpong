@@ -6,7 +6,8 @@ FROM python:3.11-alpine3.19 AS flask
 
 ENV LISTEN_IP="0.0.0.0" \
     PORT="80" \
-    DEBUG_MODE="False"
+    DEBUG_MODE="False" \
+    BOT_PUBKEY=""
 
 COPY --from=clone /discord-pingpong /apps
 

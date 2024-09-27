@@ -1,8 +1,47 @@
-﻿from flask import Flask, jsonify, request
+﻿from flask import Flask, jsonify, request, abort
+from functools import wraps
+
+def getEnv() -> dict:
+    from os import getenv
+    debugMode = bool(getenv("DEBUG_MODE")) if getenv("DEBUG_MODE") != None else False
+    listenIP = getenv("LISTEN_IP") if getenv("LISTEN_IP") != None else "0.0.0.0"
+    port = int(getenv("PORT")) if getenv("PORT") != None else 80
+    pubkey = getenv("BOT_PUBKEY") if getenv("BOT_PUBKEY") != None else Exception("NO_BOT_PBKEY_EXCPTION")
+
+    settings = dict()
+    settings["debugMode"] = debugMode
+    settings["listenIP"] = listenIP
+    settings["port"] = port
+    settings["pubkey"] = pubkey
+
+    return settings
 
 app = Flask(__name__)
+settings = getEnv()
+
+def keyVerify(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        from nacl.signing import VerifyKey
+        from nacl.exceptions import BadSignatureError
+
+        keyBox = VerifyKey(bytes.fromhex(getEnv()["pubkey"]))
+
+        timestamp = request.headers["X-Signature-Timestamp"]
+        signature = request.headers["X-Signature-Ed25519"]
+        body = request.data.decode('utf-8')
+
+        try:
+            keyBox.verify(f'{timestamp}{body}'.encode, signature=bytes.fromhex(signature))
+        except BadSignatureError:
+            abort(401, 'Invalid Signature Error')
+
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 @app.route('/', methods=['POST'])
+@keyVerify
 def ping():
     if request.json["type"] == 1:
         return jsonify({
@@ -13,21 +52,6 @@ def ping():
 def hello():
     return "Hello, World!"
 
-
-def getEnv() -> dict:
-    from os import getenv
-    debugMode = bool(getenv("DEBUG_MODE")) if getenv("DEBUG_MODE") != None else False
-    listenIP = getenv("LISTEN_IP") if getenv("LISTEN_IP") != None else "0.0.0.0"
-    port = int(getenv("PORT")) if getenv("PORT") != None else 80
-
-    settings = dict()
-    settings["debugMode"] = debugMode
-    settings["listenIP"] = listenIP
-    settings["port"] = port
-
-    return settings
-
 if __name__ == '__main__':
-    settings = getEnv()
     print("discord pingpong machine has been started!")
     app.run(host=settings["listenIP"], debug=settings["debugMode"], port=settings["port"])
