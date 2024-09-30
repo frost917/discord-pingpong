@@ -1,3 +1,5 @@
 ﻿.ping-pong-machine
 .discord-pingpong
 .env
+
+source/command/.env

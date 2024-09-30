@@ -1,52 +1,30 @@
 ﻿import requests
+from dotenv import load_dotenv
+from os import environ
 
-applicationID = 
+if load_dotenv(dotenv_path="./.env") != True:
+    raise ValueError("cannot load dotenv")
 
-url = "https://discord.com/api/v10/applications/<my_application_id>/commands"
+applicationID = environ["APP_ID"]
+token = environ["TOKEN"]
+
+print(f"application id: {applicationID}")
+print(f"token: {token}")
+
+url = f"https://discord.com/api/v10/applications/{applicationID}/commands"
 
 # This is an example CHAT_INPUT or Slash Command, with a type of 1
 json = {
-    "name": "blep",
+    "name": "ping",
     "type": 1,
-    "description": "Send a random adorable animal photo",
-    "options": [
-        {
-            "name": "animal",
-            "description": "The type of animal",
-            "type": 3,
-            "required": True,
-            "choices": [
-                {
-                    "name": "Dog",
-                    "value": "animal_dog"
-                },
-                {
-                    "name": "Cat",
-                    "value": "animal_cat"
-                },
-                {
-                    "name": "Penguin",
-                    "value": "animal_penguin"
-                }
-            ]
-        },
-        {
-            "name": "only_smol",
-            "description": "Whether to show only baby animals",
-            "type": 5,
-            "required": False
-        }
-    ]
+    "description": "Let's Ping-Pong",
 }
 
 # For authorization, you can use either your bot token
 headers = {
-    "Authorization": "Bot <my_bot_token>"
-}
-
-# or a client credentials token for your app with the applications.commands.update scope
-headers = {
-    "Authorization": "Bearer <my_credentials_token>"
+    "Authorization": f"Bot {token}"
 }
 
 r = requests.post(url, headers=headers, json=json)
+print(f"status code: {r.status_code}")
+print(r.content)
