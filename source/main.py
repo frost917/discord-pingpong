@@ -45,24 +45,37 @@ def keyVerify(f):
 
 @app.route('/', methods=['POST'])
 @keyVerify
-def ping():
-    if settings["debugMode"] == True:
-        print(request.headers)
-        print(request.data)
-    
+def interactions():
+    app.logger.debug("DEBUG: request header")
+    app.logger.debug(request.headers)
+    app.logger.debug("DEBUG: request data")
+    app.logger.debug(request.data)
+
     if request.json["type"] == 1:
         return jsonify({
             "type": 1
         })
 
-    if request.json["type"] == 2:
+    elif request.json["type"] == 2:
         if request.json["data"]["name"] == "ping":
+            app.logger.info(f"command ping requested")
             return jsonify({
                 "type": 4,
                 "data": {
                     "content": "pong!"
                 }
             })
+        
+    else:
+        app.logger.warning(f"unregistered command requested")
+        return jsonify({
+            "type": 4,
+            "data": {
+                # send lorem ipsum
+                "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            }
+        })
+
     
 @app.route('/', methods=['GET'])
 def hello():
