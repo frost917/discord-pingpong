@@ -11,7 +11,10 @@ token = environ["TOKEN"]
 print(f"application id: {applicationID}")
 print(f"token: {token}")
 
-url = f"https://discord.com/api/v10/applications/{applicationID}/commands"
+apiURL = "https://discord.com/api/v10"
+
+createCmd = f"/applications/{applicationID}/commands"
+getCmd = f"/applications/{applicationID}/commands"
 
 # This is an example CHAT_INPUT or Slash Command, with a type of 1
 json = {
@@ -25,6 +28,6 @@ headers = {
     "Authorization": f"Bot {token}"
 }
 
-r = requests.post(url, headers=headers, json=json)
+r = requests.get(apiURL + getCmd, headers=headers)
 print(f"status code: {r.status_code}")
 print(r.content)

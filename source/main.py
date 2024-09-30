@@ -43,10 +43,10 @@ def keyVerify(f):
     return decorated_function
 
 
-@app.route('/api/interactions', methods=['POST'])
+@app.route('/', methods=['POST'])
 @keyVerify
 def ping():
-    if settings["debugMode"]:
+    if settings["debugMode"] == True:
         print(request.headers)
         print(request.data)
     
